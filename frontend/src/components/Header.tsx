@@ -17,6 +17,9 @@ export default function Header() {
           <Link href="/ask" className="hover:text-blue-300 transition-colors">
             问问巨头
           </Link>
+          <Link href="/admin" className="hover:text-yellow-300 transition-colors text-gray-400 text-sm">
+            ⚙️ 管理
+          </Link>
         </nav>
       </div>
     </header>
