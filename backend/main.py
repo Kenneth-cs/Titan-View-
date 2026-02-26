@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import news, reports
+from routers import news, reports, chat
 from database import engine, Base
 
 Base.metadata.create_all(bind=engine)
@@ -18,6 +18,7 @@ app.add_middleware(
 
 app.include_router(news.router)
 app.include_router(reports.router)
+app.include_router(chat.router)
 
 @app.get("/")
 def read_root():
