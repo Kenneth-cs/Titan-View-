@@ -2,11 +2,17 @@
 爬虫基础模块：通用工具函数 + 数据入库逻辑
 所有爬虫继承 BaseCrawler 并实现 fetch() 方法
 """
+from __future__ import annotations
+
 import hashlib
 import logging
 from datetime import datetime
 from dataclasses import dataclass, field
 from typing import Optional
+
+import sys
+import os
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import requests
 from sqlalchemy.orm import Session

@@ -1,6 +1,6 @@
 # Titan View / 巨头视野 — 项目目录结构
 
-> 最后更新：2026-02-26
+> 最后更新：2026-02-25（Phase 3 & 4 完成）
 
 ```
 Titan View/
@@ -18,9 +18,21 @@ Titan View/
 │   ├── requirements.txt          # Python 依赖清单
 │   ├── titan_view.db             # SQLite 本地数据库（开发用，生产切换 MySQL）
 │   ├── venv/                     # Python 虚拟环境（已 .gitignore）
-│   └── routers/                  # API 路由模块
-│       ├── news.py               # GET /news — 原始资讯列表接口
-│       └── reports.py            # GET /reports/{date} — 每日简报接口
+│   ├── scheduler.py              # 定时任务：04:00爬取 / 06:00AI简报 / 12:00补充
+│   ├── routers/                  # API 路由模块
+│   │   ├── news.py               # GET /news — 资讯列表（支持 section/platform 筛选）
+│   │   ├── reports.py            # GET /reports/{date} — 每日简报
+│   │   ├── chat.py               # POST /chat/ask-titan — 巨头 AI 对话
+│   │   └── pipeline.py           # POST /pipeline/run — 手动触发 AI 流水线
+│   ├── ai/                       # AI 模块
+│   │   ├── volcengine.py         # 火山引擎 / DeepSeek 接口封装
+│   │   ├── personas.py           # 8位巨头人格系统提示词
+│   │   └── pipeline.py           # 三步流水线：分类→洞察→简报生成
+│   └── crawlers/                 # 爬虫模块
+│       ├── base.py               # 基类：HTTP工具、数据库写入
+│       ├── rss.py                # 新华社/路透社/36氪/财新/HN 等 RSS
+│       ├── hot_search.py         # 微博热搜 / 百度热榜
+│       └── gov.py                # gov.cn / 发改委 / 国家统计局
 │
 ├── frontend/                     # Next.js 16 前端
 │   ├── package.json
@@ -28,6 +40,17 @@ Titan View/
 │   ├── postcss.config.js
 │   ├── next.config.ts
 │   ├── tsconfig.json
+│   └── src/
+│       ├── lib/
+│       │   └── api.ts            # 统一 API 客户端（fetchNews / fetchReport / triggerPipeline）
+│       ├── components/
+│       │   ├── Header.tsx
+│       │   ├── Footer.tsx
+│       │   └── SectionCard.tsx   # 八大维度卡片（含实时数据）
+│       └── app/
+│           ├── page.tsx          # 首页（SSR，接入真实 API）
+│           ├── news/page.tsx     # 情报聚合页（CSR，平台/维度双重筛选）
+│           └── ask/page.tsx      # 问问巨头（8位巨头 + AI 对话）
 │   ├── public/                   # 静态资源
 │   └── src/
 │       ├── app/                  # Next.js App Router 页面

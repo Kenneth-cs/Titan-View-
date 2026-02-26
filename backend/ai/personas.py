@@ -2,6 +2,7 @@
 大佬 Persona 系统提示词定义
 每个 persona 包含：身份设定、思维模型关键词、输出风格要求
 """
+from __future__ import annotations
 
 PERSONAS: dict[str, dict] = {
     "li_ka_shing": {

@@ -3,10 +3,16 @@ RSS 通用爬虫
 覆盖：新华社、新浪财经、36氪、Hacker News、财新、证券时报
 RSS 最稳定，无需 JS 渲染，无反爬风险，是首选数据源
 """
+from __future__ import annotations
+
 import xml.etree.ElementTree as ET
 from datetime import datetime
 from email.utils import parsedate_to_datetime
-from crawlers.base import BaseCrawler, NewsItem
+
+try:
+    from crawlers.base import BaseCrawler, NewsItem
+except ImportError:
+    from base import BaseCrawler, NewsItem
 
 # ─────────────────────────────────────────
 # RSS 源配置表

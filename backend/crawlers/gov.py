@@ -3,10 +3,15 @@
 覆盖：中国政府网、国家发改委、国家统计局
 这是「宏观政策」和「经济数据」维度的权威数据来源
 """
+from __future__ import annotations
 import re
 from datetime import datetime
 from bs4 import BeautifulSoup
-from crawlers.base import BaseCrawler, NewsItem
+
+try:
+    from crawlers.base import BaseCrawler, NewsItem
+except ImportError:
+    from base import BaseCrawler, NewsItem
 
 
 class ChinaGovCrawler(BaseCrawler):

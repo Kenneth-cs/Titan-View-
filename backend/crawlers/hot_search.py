@@ -3,10 +3,16 @@
 覆盖：微博热搜 Top50、百度热榜 Top30
 这两个榜单反映中国社会情绪，是「消费与社会情绪」维度的核心数据源
 """
+from __future__ import annotations
+
 import json
 import re
 from datetime import datetime
-from crawlers.base import BaseCrawler, NewsItem
+
+try:
+    from crawlers.base import BaseCrawler, NewsItem
+except ImportError:
+    from base import BaseCrawler, NewsItem
 
 
 class WeiboCrawler(BaseCrawler):
@@ -20,7 +26,6 @@ class WeiboCrawler(BaseCrawler):
 
     WEIBO_HOT_URL = "https://weibo.com/ajax/side/hotSearch"
 
-    # 过滤关键词：包含这些词的话题才保留
     KEEP_KEYWORDS = [
         "经济", "股市", "A股", "楼市", "房价", "央行", "美联储",
         "AI", "人工智能", "科技", "半导体", "芯片",
@@ -32,7 +37,6 @@ class WeiboCrawler(BaseCrawler):
     ]
 
     def _should_keep(self, title: str) -> bool:
-        """判断话题是否值得保留（非纯娱乐）"""
         for kw in self.KEEP_KEYWORDS:
             if kw in title:
                 return True
@@ -50,15 +54,11 @@ class WeiboCrawler(BaseCrawler):
 
         for entry in hot_list[:50]:
             title = entry.get("word", "").strip()
-            if not title:
+            if not title or not self._should_keep(title):
                 continue
-            if not self._should_keep(title):
-                continue
-
             rank     = entry.get("num", 0)
             hot_word = entry.get("word_scheme", f"#{title}#")
             url      = f"https://s.weibo.com/weibo?q={hot_word}"
-
             items.append(NewsItem(
                 source_platform="weibo",
                 title=f"【微博热搜】{title}",
@@ -74,10 +74,7 @@ class WeiboCrawler(BaseCrawler):
 
 
 class BaiduHotCrawler(BaseCrawler):
-    """
-    百度热榜爬虫
-    接口：百度热搜榜公开 JSON 接口
-    """
+    """百度热榜爬虫"""
     platform = "baidu"
     section  = "consumer"
 
@@ -98,10 +95,8 @@ class BaiduHotCrawler(BaseCrawler):
             url   = entry.get("url", f"https://www.baidu.com/s?wd={title}")
             desc  = entry.get("desc", "")
             hot   = entry.get("hotScore", 0)
-
             if not title:
                 continue
-
             items.append(NewsItem(
                 source_platform="baidu",
                 title=f"【百度热榜】{title}",
@@ -111,20 +106,14 @@ class BaiduHotCrawler(BaseCrawler):
                 tags=["百度热榜", "热搜", "社会情绪"],
                 section="consumer",
             ))
-
         return items
 
 
-# ─────────────────────────────────────────
-# 单独运行测试
-# ─────────────────────────────────────────
 if __name__ == "__main__":
     print("--- 微博热搜 ---")
-    w = WeiboCrawler()
-    for item in w.fetch()[:5]:
+    for item in WeiboCrawler().fetch()[:5]:
         print(f"  {item.title}")
 
     print("\n--- 百度热榜 ---")
-    b = BaiduHotCrawler()
-    for item in b.fetch()[:5]:
+    for item in BaiduHotCrawler().fetch()[:5]:
         print(f"  {item.title}")

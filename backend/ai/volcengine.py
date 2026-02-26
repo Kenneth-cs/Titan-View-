@@ -2,6 +2,7 @@
 火山引擎 (Volcengine) AI 调用封装
 兼容 OpenAI SDK 接口规范，调用 DeepSeek / Doubao-pro 模型
 """
+from __future__ import annotations
 import os
 from openai import OpenAI
 from dotenv import load_dotenv
